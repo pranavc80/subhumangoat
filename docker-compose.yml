@@ -1,0 +1,24 @@
+services:
+  frontend:
+    build:
+      context: ./mk-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:3001
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./mk-backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - PORT=3000
+      - DISCORD_WEBHOOK_URL=${DISCORD_WEBHOOK_URL}
+      - API_KEY=${API_KEY}
+    volumes:
+      - ./mk-backend/subscribers.json:/usr/src/app/subscribers.json
