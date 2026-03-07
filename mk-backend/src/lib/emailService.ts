@@ -1,4 +1,3 @@
-
 import nodemailer from "nodemailer";
 import fs from "fs";
 import path from "path";
@@ -71,19 +70,35 @@ export class EmailService {
 
         console.log(`[EmailService] Sending alert to ${subscribers.length} subscribers for station ${stationId}`);
 
+        const appUrl = process.env.PUBLIC_APP_URL || "[YOUR_DEPLOYED_URL]";
+        const currentTime = new Date().toLocaleString('en-US', { 
+            timeZone: 'America/Chicago',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true,
+            month: 'short',
+            day: 'numeric'
+        });
+
         for (const sub of subscribers) {
             try {
-                // Mock sending
-                // console.log(`[EmailService] 📧 MOCK EMAIL to ${sub.email}: Storm Alert! Station ${stationId} is seeing ${intensity.toFixed(2)} in/hr (${category})`);
-
-                // Real code
                 await this.transporter.sendMail({
                     from: process.env.EMAIL_FROM || '"Cognisphere Weather" <alerts@cognisphere.com>',
                     to: sub.email,
-                    subject: `⚠️ Storm Alert: ${category} Rain Event`,
-                    text: `Heavy rain detected at station ${stationId}. Intensity: ${intensity.toFixed(2)} in/hr. Severity: ${category}.`,
+                    subject: `⚠️ Storm Alert: ${stationId}`,
+                    text: `Storm Alert!\n\nSensor ID: ${stationId}\nIntensity: ${intensity.toFixed(2)} in/hr\nTime: ${currentTime}\n\nView Map: ${appUrl}`,
+                    html: `
+                        <div style="font-family: sans-serif; padding: 20px; color: #333; max-width: 400px; border: 1px solid #eee; border-radius: 8px;">
+                            <h2 style="color: #d32f2f; margin-top: 0;">⚠️ Storm Alert</h2>
+                            <p style="margin: 8px 0;"><strong>Sensor ID:</strong> ${stationId}</p>
+                            <p style="margin: 8px 0;"><strong>Intensity:</strong> ${intensity.toFixed(2)} in/hr</p>
+                            <p style="margin: 8px 0;"><strong>Time:</strong> ${currentTime}</p>
+                            <p style="margin-top: 20px;"><a href="${appUrl}" style="display: inline-block; padding: 12px 24px; background-color: #3b82f6; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">View Real-time Map</a></p>
+                        </div>
+                    `
                 });
-                console.log(`[EmailService] Sent email to ${sub.email}`);
+                console.log(`[EmailService] Sent ultra-simplified alert to ${sub.email}`);
             } catch (e) {
                 console.error(`[EmailService] Failed to send to ${sub.email}`, e);
             }

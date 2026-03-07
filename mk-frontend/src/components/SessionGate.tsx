@@ -8,7 +8,7 @@ export default function SessionGate({ children }: { children: React.ReactNode })
     const [isAuthorized, setIsAuthorized] = useState<boolean | null>(null);
 
     useEffect(() => {
-        const authorized = localStorage.getItem('cognisphere-authorized') === 'true';
+        const authorized = sessionStorage.getItem('cognisphere-authorized') === 'true';
         setIsAuthorized(authorized);
     }, []);
 

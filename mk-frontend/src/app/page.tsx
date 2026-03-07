@@ -52,8 +52,9 @@ export default function Home() {
   useEffect(() => {
     const fetchMapData = async () => {
       try {
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
         const [weatherRes, zipRes] = await Promise.all([
-          fetch('http://localhost:3000/api/v1/weather'),
+          fetch(`${apiUrl}/api/v1/weather`),
           fetch('/data/Zip_Codes.json')
         ]);
 
@@ -90,7 +91,8 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`http://localhost:3000/api/v1/status/${stationId}`);
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+      const response = await fetch(`${apiUrl}/api/v1/status/${stationId}`);
       if (!response.ok) {
         let errorMessage = 'Failed to fetch status';
         try {

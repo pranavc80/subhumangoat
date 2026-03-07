@@ -26,7 +26,7 @@ export default function AccessGate({ onAuthorized }: AccessGateProps) {
             });
 
             if (response.ok) {
-                localStorage.setItem('cognisphere-authorized', 'true');
+                sessionStorage.setItem('cognisphere-authorized', 'true');
                 onAuthorized();
             } else {
                 setError('Invalid access code. Please try again.');
@@ -56,7 +56,7 @@ export default function AccessGate({ onAuthorized }: AccessGateProps) {
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             placeholder="Authorization Code"
-                            className={`w-full bg-slate-100 dark:bg-slate-800/50 border-2 rounded-xl px-5 py-4 text-lg outline-none transition-all 
+                            className={`w-full bg-slate-100 dark:bg-slate-800/50 text-slate-900 dark:text-white border-2 rounded-xl px-5 py-4 text-lg outline-none transition-all 
                                 ${error ? 'border-red-500 bg-red-50/50 dark:bg-red-900/10' : 'border-transparent focus:border-blue-500'}`}
                             autoFocus
                         />

@@ -23,21 +23,43 @@ const DefaultIcon = L.icon({
 
 L.Marker.prototype.options.icon = DefaultIcon;
 
-// Custom minimal marker icon
-const createCustomIcon = (isSelected: boolean) => {
+// Custom minimal marker icon with label
+const createCustomIcon = (isSelected: boolean, label: string) => {
     return L.divIcon({
-        className: 'custom-icon',
-        html: `<div style="
-            width: ${isSelected ? '16px' : '12px'};
-            height: ${isSelected ? '16px' : '12px'};
-            background-color: ${isSelected ? '#ffffff' : '#3b82f6'};
-            border: 2px solid ${isSelected ? '#3b82f6' : '#ffffff'};
-            border-radius: 50%;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            transition: all 0.3s ease;
-        "></div>`,
-        iconSize: [isSelected ? 16 : 12, isSelected ? 16 : 12],
-        iconAnchor: [isSelected ? 8 : 6, isSelected ? 8 : 6],
+        className: 'custom-sensor-icon',
+        html: `
+            <div class="marker-container" style="display: flex; flex-direction: column; align-items: center; pointer-events: none;">
+                <div style="
+                    width: ${isSelected ? '14px' : '10px'};
+                    height: ${isSelected ? '14px' : '10px'};
+                    background-color: ${isSelected ? '#ffffff' : '#3b82f6'};
+                    border: 2px solid ${isSelected ? '#3b82f6' : '#ffffff'};
+                    border-radius: 50%;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+                    transition: all 0.3s ease;
+                "></div>
+                <div class="marker-label" style="
+                    margin-top: 4px;
+                    padding: 2px 6px;
+                    background: rgba(15, 23, 42, 0.7);
+                    backdrop-filter: blur(4px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    border-radius: 4px;
+                    color: white;
+                    font-size: 10px;
+                    font-weight: 600;
+                    white-space: nowrap;
+                    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+                    pointer-events: none;
+                    opacity: ${isSelected ? '1' : '0.8'};
+                    transition: all 0.3s ease;
+                ">
+                    ${label}
+                </div>
+            </div>
+        `,
+        iconSize: [100, 40], // Large enough box for label
+        iconAnchor: [50, isSelected ? 7 : 5], // Center horizontally, dot at origin
     });
 };
 
@@ -268,6 +290,15 @@ export default function WeatherMap({
                 .custom-popup .leaflet-popup-close-button {
                     display: none;
                 }
+                
+                .custom-sensor-icon {
+                    background: transparent !important;
+                    border: none !important;
+                }
+                
+                .marker-container {
+                    transform: translate(-50%, 0);
+                }
             `}</style>
             <MapContainer
                 center={center}
@@ -321,7 +352,7 @@ export default function WeatherMap({
                         <Marker
                             key={station.stationID}
                             position={[station.lat, station.lon]}
-                            icon={createCustomIcon(isSelected)}
+                            icon={createCustomIcon(isSelected, station.stationID)}
                             eventHandlers={{
                                 click: () => {
                                     if (onStationSelect) {
@@ -381,30 +412,31 @@ export default function WeatherMap({
                                             </div>
                                         </div>
                                         <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded">
+                                            <div className="text-[10px] text-gray-700 dark:text-gray-300 uppercase">Temperature</div>
+                                            <div className="text-sm font-mono font-semibold text-black dark:text-white">
+                                                {Math.round(selectedStation.imperial.temp)}°F
+                                            </div>
+                                        </div>
+                                        <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded">
                                             <div className="text-[10px] text-gray-700 dark:text-gray-300 uppercase">Duration</div>
                                             <div className="text-sm font-mono font-semibold text-black dark:text-white">
                                                 {stationStatus.triggeringDuration}m
                                             </div>
                                         </div>
-                                    </div>
-
-                                    {/* Storm Severity Info */}
-                                    <div className="pt-2 border-t border-slate-200 dark:border-slate-700/50">
-                                        <div className="text-[10px] text-gray-700 dark:text-gray-300 uppercase mb-1">Storm Severity</div>
-                                        <div className="flex items-center gap-2">
-                                            <div className={`w-2 h-2 rounded-full ${stationStatus.maxIntensity > 3.57 ? 'bg-red-900' :
+                                        <div className="bg-slate-50 dark:bg-slate-800/50 p-2 rounded flex flex-col justify-center items-center">
+                                            <div className={`w-2 h-2 rounded-full mb-1 ${stationStatus.maxIntensity > 3.57 ? 'bg-red-900' :
                                                 stationStatus.maxIntensity > 2.73 ? 'bg-red-600' :
                                                     stationStatus.maxIntensity > 2.35 ? 'bg-orange-500' :
                                                         stationStatus.maxIntensity > 1.85 ? 'bg-yellow-500' :
                                                             'bg-blue-500'
                                                 }`}></div>
-                                            <span className="text-xs font-medium text-black dark:text-white">
+                                            <div className="text-[10px] font-medium text-black dark:text-white">
                                                 {stationStatus.maxIntensity > 3.57 ? 'Emergency' :
-                                                    stationStatus.maxIntensity > 2.73 ? 'High Priority' :
+                                                    stationStatus.maxIntensity > 2.73 ? 'High' :
                                                         stationStatus.maxIntensity > 2.35 ? 'Medium' :
                                                             stationStatus.maxIntensity > 1.85 ? 'Moderate' :
-                                                                'Light/Chill'}
-                                            </span>
+                                                                'Normal'}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

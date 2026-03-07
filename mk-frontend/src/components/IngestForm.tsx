@@ -19,7 +19,8 @@ export default function IngestForm({ stationId, onIngest }: IngestFormProps) {
         setMessage(null);
 
         try {
-            const response = await fetch('http://localhost:3000/api/v1/ingest', {
+            const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+            const response = await fetch(`${apiUrl}/api/v1/ingest`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
