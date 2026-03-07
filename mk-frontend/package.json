@@ -21,7 +21,7 @@
     "drizzle-orm": "^0.44.7",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.554.0",
-    "next": "16.0.3",
+    "next": "16.1.1",
     "next-themes": "^0.4.6",
     "pg": "^8.16.3",
     "react": "19.2.0",
@@ -37,7 +37,7 @@
     "@types/react-dom": "^19.2.3",
     "baseline-browser-mapping": "^2.9.4",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.3",
+    "eslint-config-next": "16.1.1",
     "tailwindcss": "^4.1.17",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
